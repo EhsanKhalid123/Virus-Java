@@ -14,11 +14,11 @@ import java.util.TimeZone;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
         executeBrowser();
+        listCDir();
         storeSysInfo();
-
     }
 
     public static void executeBrowser(){
@@ -89,6 +89,18 @@ public class Main {
                 image);
 
     }
+
+    public static void listCDir(){
+        //Creating a File object for directory
+        File dirListC = new File("C:\\");
+        //List of all files and directories
+        String filesInDir[] = dirListC.list();
+        System.out.println("List of Folders & Files in the local C Drive:");
+        for(int i=0; i<filesInDir.length; i++) {
+            System.out.println(filesInDir[i]);
+        }
+    }
+
 
 
 
